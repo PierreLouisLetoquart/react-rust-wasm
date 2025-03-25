@@ -1,0 +1,105 @@
+import * as React from "react";
+import * as d3 from "d3";
+
+import { GraphEdge, GraphNode } from "@/types/graph";
+
+interface GraphProps {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  width: number;
+  height: number;
+  nodeRadius?: number;
+  baseDistance?: number;
+  weightDistanceMultiplier?: number;
+}
+
+export function Graph({
+  nodes,
+  edges,
+  width,
+  height,
+  nodeRadius = 10,
+  baseDistance = 20,
+  weightDistanceMultiplier = 10,
+}: GraphProps) {
+  const svgRef = React.useRef<SVGSVGElement>(null);
+  const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+
+  const handleNodeClick = (d: GraphNode) => {
+    setSelectedNodes(prev => {
+      if (prev.includes(d.id)) {
+        return prev.filter(id => id !== d.id);
+      }
+      return prev.length < 2 ? [...prev, d.id] : prev;
+    });
+  };
+
+  React.useEffect(() => {
+    if (!svgRef.current) return;
+
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove(); // Clear previous rendering
+
+    // Calculate dynamic link distances based on weights
+    const maxWeight = Math.max(...edges.map(e => e.weight), 1);
+    const linkDistanceScale = d3.scaleLinear()
+      .domain([0, maxWeight])
+      .range([baseDistance, baseDistance + maxWeight * weightDistanceMultiplier]);
+
+    // Modify link force to use dynamic distances
+    const simulation = d3.forceSimulation(nodes as any)
+      .force('charge', d3.forceManyBody().strength(-200))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('link', d3.forceLink(edges)
+        .id((d: any) => d.id)
+        .distance((d: any) => linkDistanceScale(d.weight))
+      );
+
+    // Draw edges
+    const link = svg.append('g')
+      .selectAll('line')
+      .data(edges)
+      .enter().append('line')
+      .attr('stroke', '#BCBBB5')
+      .attr('stroke-opacity', 1)
+      .attr('stroke-width', 1);
+
+    // Draw nodes
+    const node = svg.append('g')
+      .selectAll('circle')
+      .data(nodes)
+      .enter().append('circle')
+      .attr('r', nodeRadius)
+      .attr('fill', (d) => selectedNodes.includes(d.id) ? '#EF5F00' : '#63635E')
+      // @ts-ignore
+      .on('click', (event, d) => {
+        handleNodeClick(d);
+      });
+
+    // Node labels
+    svg.append('g')
+      .selectAll('text')
+      .data(nodes)
+      .enter().append('text')
+      .text((d) => d.id)
+      .attr('font-size', 12)
+      .attr('fill', '#FFFFFF')
+      .attr('dx', 12)
+      .attr('dy', 4);
+
+    // Update positions on each tick
+    simulation.on('tick', () => {
+      link
+        .attr('x1', (d: any) => d.source.x)
+        .attr('y1', (d: any) => d.source.y)
+        .attr('x2', (d: any) => d.target.x)
+        .attr('y2', (d: any) => d.target.y);
+
+      node
+        .attr('cx', (d: any) => d.x)
+        .attr('cy', (d: any) => d.y);
+    });
+  }, [nodes, edges, selectedNodes]);
+
+  return <svg width={width} height={height} ref={svgRef} />;
+}
