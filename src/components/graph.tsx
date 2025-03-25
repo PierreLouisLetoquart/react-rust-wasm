@@ -8,6 +8,10 @@ interface GraphProps {
   edges: GraphEdge[];
   width: number;
   height: number;
+
+  selectedNodes: GraphNode[];
+  onNodeSelection: (node: GraphNode) => void;
+
   nodeRadius?: number;
   baseDistance?: number;
   weightDistanceMultiplier?: number;
@@ -18,21 +22,15 @@ export function Graph({
   edges,
   width,
   height,
+
+  selectedNodes,
+  onNodeSelection,
+
   nodeRadius = 10,
   baseDistance = 20,
   weightDistanceMultiplier = 10,
 }: GraphProps) {
   const svgRef = React.useRef<SVGSVGElement>(null);
-  const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
-
-  const handleNodeClick = (d: GraphNode) => {
-    setSelectedNodes(prev => {
-      if (prev.includes(d.id)) {
-        return prev.filter(id => id !== d.id);
-      }
-      return prev.length < 2 ? [...prev, d.id] : prev;
-    });
-  };
 
   React.useEffect(() => {
     if (!svgRef.current) return;
@@ -70,10 +68,10 @@ export function Graph({
       .data(nodes)
       .enter().append('circle')
       .attr('r', nodeRadius)
-      .attr('fill', (d) => selectedNodes.includes(d.id) ? '#EF5F00' : '#63635E')
+      .attr('fill', (d) => selectedNodes.includes(d) ? '#EF5F00' : '#63635E')
       // @ts-ignore
       .on('click', (event, d) => {
-        handleNodeClick(d);
+        onNodeSelection(d);
       });
 
     // Node labels
