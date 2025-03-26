@@ -17,6 +17,23 @@ export default function App() {
   const [selectedNodes, setSelectedNodes] = React.useState<GraphNode[]>([]);
   const [shortestPath, setShortestPath] = React.useState<number[]>([]);
 
+  // Load WASM module and initialize the graph
+  React.useEffect(() => {
+    const loadWasm = async () => {
+      try {
+        const wasm = await import("./dijkstra");
+        await wasm.default();
+        const graphInstance = new wasm.GraphWrapper();
+        setGraph(graphInstance);
+      } catch (error) {
+        console.error("Error loading the WASM module", error);
+        alert("Failed to load the graph algorithms. Please try again.");
+      }
+    };
+
+    loadWasm();
+  }, []);
+
   function handleNodeSelection(node: GraphNode) {
     if (shortestPath.length > 0) {
       setShortestPath([]);
@@ -49,30 +66,27 @@ export default function App() {
   };
 
   function computeDijkstra() {
-    if (!graph || selectedNodes.length != 2) return;
+    if (!graph || selectedNodes.length !== 2) return;
 
-    const result = graph.dijkstra(selectedNodes[0].id);
-    // @ts-ignore
-    const dijkstraResults: DijkstraResult = Array.from(result).map((item: any) => ({
-      vertex: item.vertex,
-      predecessor: item.predecessor,
-    }));
+    try {
+      const result = graph.dijkstra(selectedNodes[0].id);
+      // @ts-ignore
+      const dijkstraResults: DijkstraResult = Array.from(result).map((item: any) => ({
+        vertex: item.vertex,
+        predecessor: item.predecessor,
+      }));
 
-    const path = reconstructPath(selectedNodes[0].id, selectedNodes[1].id, dijkstraResults);
-    setShortestPath(path);
+      const path = reconstructPath(selectedNodes[0].id, selectedNodes[1].id, dijkstraResults);
+      setShortestPath(path);
 
-    console.log(selectedNodes[0].id);
-    console.log(selectedNodes[1].id);
-    console.log(path);
+      console.log(selectedNodes[0].id);
+      console.log(selectedNodes[1].id);
+      console.log(path);
+    } catch (error) {
+      console.error("Error running Dijkstra's algorithm", error);
+      alert("Failed to compute the shortest path. Please check your graph.");
+    }
   }
-
-  React.useEffect(() => {
-    import("./dijkstra").then(async (wasm) => {
-      await wasm.default();
-      const graph = new wasm.GraphWrapper();
-      setGraph(graph);
-    });
-  }, []);
 
   React.useEffect(() => {
     const handleResize = () => {
