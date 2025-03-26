@@ -31,8 +31,9 @@ export default function App() {
   }
 
   const handleFileUpload = async (file: File[]) => {
+    if (!graph) return;
     try {
-      const { nodes, edges } = await parseGraphCSV(file[0]);
+      const { nodes, edges } = await parseGraphCSV(file[0], graph);
       setNodes(nodes);
       setEdges(edges);
     } catch (error) {
@@ -46,15 +47,6 @@ export default function App() {
       await wasm.default();
       const graph = new wasm.GraphWrapper();
       setGraph(graph);
-
-      // TODO: Remove this test code
-      graph.add_edge(0, 1, 4);
-      graph.add_edge(0, 2, 1);
-      graph.add_edge(2, 1, 2);
-      graph.add_edge(1, 3, 1);
-      graph.add_edge(2, 3, 5);
-      const shortestPaths = graph.dijkstra(0);
-      console.log("Dijkstra Result:", shortestPaths);
     });
   }, []);
 

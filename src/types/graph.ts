@@ -1,11 +1,11 @@
 export interface GraphNode {
-  id: string;
+  id: number;
   x?: number;
   y?: number;
 }
 
 export interface GraphEdge {
-  source: string;
-  target: string;
+  source: number;
+  target: number;
   weight: number;
 }
