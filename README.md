@@ -31,6 +31,8 @@ bun run build
 bun run preview
 ```
 
+You can now access the app at `http://localhost:5173` and drop the example graph file [`data.csv`](./src/assets/data.csv) to see the shortest path between two nodes.
+
 > [!NOTE]
 > To modify the Rust code used for Dijkstra's implementation and get more info on the WASM building process, check out [this repository](https://github.com/PierreLouisLetoquart/dijkstra-wasm).
 
