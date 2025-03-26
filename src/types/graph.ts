@@ -9,3 +9,12 @@ export interface GraphEdge {
   target: number;
   weight: number;
 }
+
+export interface DijkstraResult {
+  vertex: number;
+  predecessor: {
+    predecessor: number;
+    distance: number;
+  } | null;
+}[];
+

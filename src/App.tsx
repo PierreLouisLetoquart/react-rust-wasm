@@ -5,8 +5,9 @@ import { parseGraphCSV } from "@/lib/parser";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
 import { SelectBanner } from "@/components/select-banner";
-import type { GraphEdge, GraphNode } from "@/types/graph";
+import type { DijkstraResult, GraphEdge, GraphNode } from "@/types/graph";
 import type { GraphWrapper } from "@/dijkstra/dijkstra";
+import { reconstructPath } from "./lib/utils";
 
 export default function App() {
   const [graph, setGraph] = React.useState<GraphWrapper | null>(null);
@@ -14,6 +15,7 @@ export default function App() {
   const [edges, setEdges] = React.useState<GraphEdge[]>([]);
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
   const [selectedNodes, setSelectedNodes] = React.useState<GraphNode[]>([]);
+  const [shortestPath, setShortestPath] = React.useState<number[]>([]);
 
   function handleNodeSelection(node: GraphNode) {
     // we check if the node is already selected
@@ -41,6 +43,24 @@ export default function App() {
       alert("Error parsing file");
     }
   };
+
+  function computeDijkstra() {
+    if (!graph || selectedNodes.length != 2) return;
+
+    const result = graph.dijkstra(selectedNodes[0].id);
+    // @ts-ignore
+    const dijkstraResults: DijkstraResult = Array.from(result).map((item: any) => ({
+      vertex: item.vertex,
+      predecessor: item.predecessor,
+    }));
+
+    const path = reconstructPath(selectedNodes[0].id, selectedNodes[1].id, dijkstraResults);
+    setShortestPath(path);
+
+    console.log(selectedNodes[0].id);
+    console.log(selectedNodes[1].id);
+    console.log(path);
+  }
 
   React.useEffect(() => {
     import("./dijkstra").then(async (wasm) => {
@@ -83,7 +103,7 @@ export default function App() {
           variant={"hexaly"}
           className="absolute z-50 bottom-4 right-1/2 translate-x-1/2"
           disabled={selectedNodes.length !== 2}
-          onClick={() => alert("Compute")}
+          onClick={computeDijkstra}
         >
           Apply Dijkstra
         </Button>
