@@ -64,6 +64,12 @@ export function parseGraphCSV(file: File, graph: GraphWrapper): Promise<ParsedGr
               weight
             });
 
+            edges.push({
+              target,
+              source,
+              weight
+            });
+
             graph.add_edge(source, target, weight);
           }
 
