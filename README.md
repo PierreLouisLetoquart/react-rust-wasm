@@ -59,3 +59,7 @@ This is a super simplified and unoptimized piece of code, so feel free to submit
 
 > [!CAUTION]
 > I've encountered a weird bug on Firefox (Zen-browser) and am currently exploring the issue. 🔍
+
+## Refs
+
+The upload component is taken and adapted from [Aceternity](https://ui.aceternity.com/components/file-upload)
