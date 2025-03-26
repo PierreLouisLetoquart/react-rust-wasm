@@ -17,6 +17,13 @@ export default function App() {
   const [selectedNodes, setSelectedNodes] = React.useState<GraphNode[]>([]);
   const [shortestPath, setShortestPath] = React.useState<number[]>([]);
 
+  function resetAll() {
+    setNodes([]);
+    setEdges([]);
+    setSelectedNodes([]);
+    setShortestPath([]);
+  }
+
   // Load WASM module and initialize the graph
   React.useEffect(() => {
     const loadWasm = async () => {
@@ -118,14 +125,21 @@ export default function App() {
           onNodeSelection={handleNodeSelection}
           shortestPath={shortestPath}
         />
-        <Button
-          variant={"hexaly"}
-          className="absolute z-50 bottom-4 right-1/2 translate-x-1/2"
-          disabled={selectedNodes.length !== 2}
-          onClick={computeDijkstra}
-        >
-          Apply Dijkstra
-        </Button>
+        <div className="absolute z-50 bottom-4 right-1/2 translate-x-1/2 flex items-center gap-3">
+          <Button
+            variant={"outline"}
+            onClick={resetAll}
+          >
+            Clear All
+          </Button>
+          <Button
+            variant={"hexaly"}
+            disabled={selectedNodes.length !== 2}
+            onClick={computeDijkstra}
+          >
+            Apply Dijkstra
+          </Button>
+        </div>
       </main>
     )
   }
