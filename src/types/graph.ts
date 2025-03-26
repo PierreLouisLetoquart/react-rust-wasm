@@ -16,5 +16,5 @@ export interface DijkstraResult {
     predecessor: number;
     distance: number;
   } | null;
-}[];
+};
 

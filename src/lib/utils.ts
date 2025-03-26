@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 export function reconstructPath(
   start: number,
   end: number,
-  dijkstraResults: DijkstraResult
+  dijkstraResults: DijkstraResult[]
 ) {
   const path = [];
   let current = end;

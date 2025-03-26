@@ -71,7 +71,7 @@ export default function App() {
     try {
       const result = graph.dijkstra(selectedNodes[0].id);
       // @ts-ignore
-      const dijkstraResults: DijkstraResult = Array.from(result).map((item: any) => ({
+      const dijkstraResults: DijkstraResult[] = Array.from(result).map((item: any) => ({
         vertex: item.vertex,
         predecessor: item.predecessor,
       }));
