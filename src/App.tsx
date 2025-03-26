@@ -22,6 +22,11 @@ export default function App() {
     setEdges([]);
     setSelectedNodes([]);
     setShortestPath([]);
+
+    // TODO: Clear the graph, add a clear method to the GraphWrapper...
+    // if (graph) {
+    //   graph.clear();
+    // }
   }
 
   // Load WASM module and initialize the graph
