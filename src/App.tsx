@@ -98,6 +98,7 @@ export default function App() {
           height={dimensions.height}
           selectedNodes={selectedNodes}
           onNodeSelection={handleNodeSelection}
+          shortestPath={shortestPath}
         />
         <Button
           variant={"hexaly"}

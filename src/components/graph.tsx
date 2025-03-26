@@ -11,6 +11,7 @@ interface GraphProps {
 
   selectedNodes: GraphNode[];
   onNodeSelection: (node: GraphNode) => void;
+  shortestPath: number[] | null;
 
   nodeRadius?: number;
   baseDistance?: number;
@@ -25,6 +26,7 @@ export function Graph({
 
   selectedNodes,
   onNodeSelection,
+  shortestPath,
 
   nodeRadius = 10,
   baseDistance = 20,
@@ -98,6 +100,23 @@ export function Graph({
         .attr('cy', (d: any) => d.y);
     });
   }, [nodes, edges, selectedNodes, width, height]);
+
+  React.useEffect(() => {
+    if (!shortestPath) return;
+
+    const svg = d3.select(svgRef.current);
+
+    // Color nodes in the shortest path
+    svg.selectAll('circle')
+      .attr('fill', (d: any) => shortestPath.includes(d.id) ? '#EF5F00' : (selectedNodes.includes(d) ? '#EF5F00' : '#63635E'));
+
+    // Color edges in the shortest path
+    svg.selectAll('line')
+      .attr('stroke', (d: any) => {
+        const isPartOfShortestPath = (shortestPath.includes(d.source.id) && shortestPath.includes(d.target.id));
+        return isPartOfShortestPath ? '#EF5F00' : '#BCBBB5';
+      });
+  }, [shortestPath, nodes, edges, selectedNodes]);
 
   return <svg width={width} height={height} ref={svgRef} />;
 }
