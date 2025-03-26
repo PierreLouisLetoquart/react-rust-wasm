@@ -1,13 +1,14 @@
 import Papa from "papaparse";
 
 import type { GraphNode, GraphEdge } from "@/types/graph";
+import { GraphWrapper } from "@/dijkstra/dijkstra";
 
 interface ParsedGraphData {
   nodes: GraphNode[];
   edges: GraphEdge[];
 }
 
-export function parseGraphCSV(file: File): Promise<ParsedGraphData> {
+export function parseGraphCSV(file: File, graph: GraphWrapper): Promise<ParsedGraphData> {
   return new Promise((resolve, reject) => {
     Papa.parse<string[]>(file, {
       header: false,
@@ -33,7 +34,7 @@ export function parseGraphCSV(file: File): Promise<ParsedGraphData> {
             }
 
             nodes.push({
-              id: parseStringSafely(node[0], `Node ID at row ${i}`),
+              id: parseNumberSafely(node[0], `Node ID at row ${i}`),
               x: parseFloatSafely(node[1], `X coordinate for node ${node[0]}`),
               y: parseFloatSafely(node[2], `Y coordinate for node ${node[0]}`)
             });
@@ -53,11 +54,17 @@ export function parseGraphCSV(file: File): Promise<ParsedGraphData> {
               throw new Error(`Invalid edge data at row ${i}`);
             }
 
+            const source = parseNumberSafely(edge[0], `Source node at row ${i}`);
+            const target = parseNumberSafely(edge[1], `Target node at row ${i}`);
+            const weight = parseFloatSafely(edge[2], `Edge weight at row ${i}`);
+
             edges.push({
-              source: parseStringSafely(edge[0], `Source node at row ${i}`),
-              target: parseStringSafely(edge[1], `Target node at row ${i}`),
-              weight: parseFloatSafely(edge[2], `Edge weight at row ${i}`)
+              source,
+              target,
+              weight
             });
+
+            graph.add_edge(source, target, weight);
           }
 
           resolve({ nodes, edges });
@@ -87,6 +94,7 @@ function parseFloatSafely(value: string, context: string): number {
   return parsed;
 }
 
+// @ts-ignore
 function parseStringSafely(value: string, context: string): string {
   if (!value || typeof value !== 'string') {
     throw new Error(`Invalid string for ${context}: ${value}`);
