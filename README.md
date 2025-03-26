@@ -1,6 +1,6 @@
 # React + WASM 🦀
 
-This project is a minimal React.js app bundled with Vite and using Rust compiled into WASM. It features a Dijkstra's algorithm implementation ([source code](#)) to efficiently compute the shortest path of a graph and display it.
+This project is a minimal React.js app bundled with Vite and using Rust compiled into WASM. It features a Dijkstra's algorithm implementation ([source code](https://github.com/PierreLouisLetoquart/dijkstra-wasm)) to efficiently compute the shortest path of a graph and display it.
 
 https://github.com/user-attachments/assets/f4ab1a34-c48a-4485-bdd8-7c3ea9729177
 
@@ -32,7 +32,7 @@ bun run preview
 ```
 
 > [!NOTE]
-> To modify the Rust code used for Dijkstra's implementation and get more info on the WASM building process, check out [this repository](#).
+> To modify the Rust code used for Dijkstra's implementation and get more info on the WASM building process, check out [this repository](https://github.com/PierreLouisLetoquart/dijkstra-wasm).
 
 ## Data Source Format 📊
 
