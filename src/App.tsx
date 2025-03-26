@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
 import { SelectBanner } from "@/components/select-banner";
 import type { GraphEdge, GraphNode } from "@/types/graph";
+import type { GraphWrapper } from "@/dijkstra/dijkstra";
 
 export default function App() {
+  const [graph, setGraph] = React.useState<GraphWrapper | null>(null);
   const [nodes, setNodes] = React.useState<GraphNode[]>([]);
   const [edges, setEdges] = React.useState<GraphEdge[]>([]);
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
@@ -38,6 +40,23 @@ export default function App() {
       alert("Error parsing file");
     }
   };
+
+  React.useEffect(() => {
+    import("./dijkstra").then(async (wasm) => {
+      await wasm.default();
+      const graph = new wasm.GraphWrapper();
+      setGraph(graph);
+
+      // TODO: Remove this test code
+      graph.add_edge(0, 1, 4);
+      graph.add_edge(0, 2, 1);
+      graph.add_edge(2, 1, 2);
+      graph.add_edge(1, 3, 1);
+      graph.add_edge(2, 3, 5);
+      const shortestPaths = graph.dijkstra(0);
+      console.log("Dijkstra Result:", shortestPaths);
+    });
+  }, []);
 
   React.useEffect(() => {
     const handleResize = () => {

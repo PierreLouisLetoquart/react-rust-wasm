@@ -97,7 +97,7 @@ export function Graph({
         .attr('cx', (d: any) => d.x)
         .attr('cy', (d: any) => d.y);
     });
-  }, [nodes, edges, selectedNodes]);
+  }, [nodes, edges, selectedNodes, width, height]);
 
   return <svg width={width} height={height} ref={svgRef} />;
 }
