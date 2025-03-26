@@ -18,6 +18,10 @@ export default function App() {
   const [shortestPath, setShortestPath] = React.useState<number[]>([]);
 
   function handleNodeSelection(node: GraphNode) {
+    if (shortestPath.length > 0) {
+      setShortestPath([]);
+    }
+
     // we check if the node is already selected
     const index = selectedNodes.findIndex((n) => n.id === node.id);
     if (index === -1) {

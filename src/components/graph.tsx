@@ -99,24 +99,20 @@ export function Graph({
         .attr('cx', (d: any) => d.x)
         .attr('cy', (d: any) => d.y);
     });
-  }, [nodes, edges, selectedNodes, width, height]);
 
-  React.useEffect(() => {
-    if (!shortestPath) return;
+    if (shortestPath) {
+      // Color nodes in the shortest path
+      svg.selectAll('circle')
+        .attr('fill', (d: any) => shortestPath.includes(d.id) ? '#EF5F00' : (selectedNodes.includes(d) ? '#EF5F00' : '#63635E'));
 
-    const svg = d3.select(svgRef.current);
-
-    // Color nodes in the shortest path
-    svg.selectAll('circle')
-      .attr('fill', (d: any) => shortestPath.includes(d.id) ? '#EF5F00' : (selectedNodes.includes(d) ? '#EF5F00' : '#63635E'));
-
-    // Color edges in the shortest path
-    svg.selectAll('line')
-      .attr('stroke', (d: any) => {
-        const isPartOfShortestPath = (shortestPath.includes(d.source.id) && shortestPath.includes(d.target.id));
-        return isPartOfShortestPath ? '#EF5F00' : '#BCBBB5';
-      });
-  }, [shortestPath, nodes, edges, selectedNodes]);
+      // Color edges in the shortest path
+      svg.selectAll('line')
+        .attr('stroke', (d: any) => {
+          const isPartOfShortestPath = (shortestPath.includes(d.source.id) && shortestPath.includes(d.target.id));
+          return isPartOfShortestPath ? '#EF5F00' : '#BCBBB5';
+        });
+    }
+  }, [nodes, edges, selectedNodes, shortestPath, width, height]);
 
   return <svg width={width} height={height} ref={svgRef} />;
 }
