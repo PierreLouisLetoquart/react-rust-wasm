@@ -108,7 +108,13 @@ export function Graph({
       // Color edges in the shortest path
       svg.selectAll('line')
         .attr('stroke', (d: any) => {
-          const isPartOfShortestPath = (shortestPath.includes(d.source.id) && shortestPath.includes(d.target.id));
+          //const isPartOfShortestPath = (shortestPath.includes(d.source.id) && shortestPath.includes(d.target.id));
+          const isPartOfShortestPath = shortestPath.some((node, index) =>
+            index < shortestPath.length - 1 &&
+            node === d.source.id &&
+            shortestPath[index + 1] === d.target.id
+          );
+
           return isPartOfShortestPath ? '#EF5F00' : '#BCBBB5';
         });
     }
