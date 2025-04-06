@@ -1,0 +1,21 @@
+{
+  "name": "dijkstra",
+  "type": "module",
+  "description": "Dijkstra's algorithm in Rust optimized for WebAssembly",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "unpublished yet"
+  },
+  "files": [
+    "dijkstra_bg.wasm",
+    "dijkstra.js",
+    "dijkstra.d.ts"
+  ],
+  "main": "dijkstra.js",
+  "types": "dijkstra.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
